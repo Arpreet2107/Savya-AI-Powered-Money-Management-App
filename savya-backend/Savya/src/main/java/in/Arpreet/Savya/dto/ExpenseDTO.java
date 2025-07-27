@@ -5,21 +5,22 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
-public class ProfileDTO {
+public class ExpenseDTO {
     private Long id;
-    private String fullName;
-    private String email;
-    private String password;
-    private String profileImageUrl;
+    private String name;
+    private String icon;
+    private String categoryName;
+    private Long categoryId;
+    private BigDecimal amount;
+    private LocalDate date;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
 }

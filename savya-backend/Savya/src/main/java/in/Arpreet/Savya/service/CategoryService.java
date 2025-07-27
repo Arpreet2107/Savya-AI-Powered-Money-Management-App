@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,11 +27,28 @@ public class CategoryService {
     }
 
     //get categories for the current user
-    public List<CategoryDTO> getAllCategoriesForCurrentUser() {
+    public List<CategoryDTO> getCategoriesForCurrentUser() {
         ProfileEntity profile = profileService.getCurrentProfile();
         List<CategoryEntity> categories = categoryRepository.findByProfileId(profile.getId());
-        return categories.stream().map(this::toDTO).collect(Collectors.toList());
+        return categories.stream().map(this::toDTO).toList();
+    }
 
+    //get category by type for the current user
+    public List<CategoryDTO> getCategoriesByTypeForCurrentUser(String type) {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        List<CategoryEntity> entities = categoryRepository.findByTypeAndProfileId(type, profile.getId());
+        List<CategoryDTO> list = entities.stream().map(this::toDTO).toList();
+        return list;
+    }
+
+    public CategoryDTO updateCategory(Long categoryId, CategoryDTO dto) {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        CategoryEntity existingCategory = categoryRepository.findByIdAndProfileId(categoryId, profile.getId())
+                .orElseThrow(() -> new RuntimeException("Category with this id does not exist"));
+        existingCategory.setName(dto.getName());
+        existingCategory.setIcon(dto.getIcon());
+        existingCategory = categoryRepository.save(existingCategory);
+        return toDTO(existingCategory);
     }
 
     //helper methods

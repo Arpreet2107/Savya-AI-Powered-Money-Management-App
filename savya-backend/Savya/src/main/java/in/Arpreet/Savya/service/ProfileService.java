@@ -27,17 +27,17 @@ public class ProfileService {
     private final JwtUtil jwtUtil;
 
 
-    //add methods to handle  the profile-related operations, such as creating, updating, and retrieving profiles.
+    //add methods to handle the profile-related operations, such as creating, updating, and retrieving profiles.
     public ProfileDTO registerProfile(ProfileDTO profileDTO) {
         ProfileEntity newProfile = toEntity(profileDTO);
         newProfile.setActivationToken(UUID.randomUUID().toString());
         newProfile = profileRepository.save(newProfile);
         //Sending the activation email
-        String activationLink = "https://localhost:8080/api/v1.0/activate?token=" +  newProfile.getActivationToken();
+        String activationLink = "http://localhost:8080/api/v1.0/activate?token=" + newProfile.getActivationToken();
         String subject = "Activate your Savya Account";
         String body = "Click on the following link to activate your account: " + activationLink;
         emailService.sendEmail(newProfile.getEmail(), subject,body);
-        return toDTO(newProfile);//placeholder return
+        return toDTO(newProfile);
     }
     public ProfileEntity toEntity(ProfileDTO profileDTO) {
         return ProfileEntity.builder()
@@ -55,7 +55,6 @@ public class ProfileService {
                 .id(profileEntity.getId())
                 .fullName(profileEntity.getFullName())
                 .email(profileEntity.getEmail())
-                .password(profileEntity.getPassword())
                 .profileImageUrl(profileEntity.getProfileImageUrl())
                 .createdAt(profileEntity.getCreatedAt())
                 .updatedAt((profileEntity.getUpdatedAt()))
@@ -97,7 +96,7 @@ public class ProfileService {
                 .updatedAt(currentUser.getUpdatedAt())
                 .build();
     }
-    public Map<String, Object> authenticationAndGenerateToken(AuthDTO authDTO){
+    public Map<String, Object> authenticateAndGenerateToken(AuthDTO authDTO){
         try{
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken((authDTO.getEmail()), authDTO.getPassword()));
             //generating JWT TOKEN

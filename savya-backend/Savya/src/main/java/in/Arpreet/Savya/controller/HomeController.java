@@ -13,5 +13,4 @@ public class HomeController {
     public String healthCheck() {
         return "Application is running successfully at " + LocalDateTime.now();
     }
-
 }
