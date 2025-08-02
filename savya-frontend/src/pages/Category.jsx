@@ -1,9 +1,64 @@
 import Dashboard from "../components/Dashboard.jsx";
+import {useUser} from "../hooks/useUser.jsx";
+import {Plus} from "lucide-react";
+import CategoryList from "../components/CategoryList.jsx";
+import {useEffect, useState} from "react";
+import {API_ENDPOINTS} from "../util/apiEndpoints.js";
+import axiosConfig from "../util/axiosConfig.jsx";
+import Modal from "../components/Modal.jsx";
 
 const Category = () =>{
+    useUser();
+    const [loading,setLoading] = useState(false);
+    const [categoryData,setCategoryData] = useState([]);
+    const [openAddCategoryModal,setOpenAddCategoryModal] = useState(false);
+    const [openEditCategoryModal,setOpenEditCAtegoryModal] = useState(false);
+    const [selectedCategory,setSelectedCategory] = useState(null);
+
+    const fetchCategoryDetails = async () => {
+        if(loading) return;
+        setLoading(true);
+        try{
+            const response = await axiosConfig.get(API_ENDPOINTS.GET_ALL_CATEGORIES);
+            if(response.status === 200){
+                console.log('categories',response.data);
+            }
+        }catch(error){
+            console.error('Something went wrong. Please try again.',error);
+            toast.error(error.message);
+        }finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        fetchCategoryDetails();
+    }, []);
     return(
         <Dashboard activeMenu="Category">
-            This is category page
+            <div className="my-5 mx-auto">
+                {/*Add button to add category*/}
+                <div className="flex justify-between items-center mb-5">
+                    <h2 className="text-2xl font-semibold">All categories</h2>
+                    <button
+                        onClick={() => setOpenAddCategoryModal(true)}
+                        className="add-btn flex items-center gap-1">
+                        <Plus size={15} />
+                    </button>
+                </div>
+                {/*CategoryList*/}
+                <CategoryList categories={categoryData}/>
+
+                {/*Adding category modal*/}
+                <Modal
+                    isOpen={openAddCategoryModal}
+                    onClose={() => setOpenAddCategoryModal(false)}
+                    title="Add Category"
+                >
+                    Category Form
+                </Modal>
+
+            </div>
         </Dashboard>
     )
 }
