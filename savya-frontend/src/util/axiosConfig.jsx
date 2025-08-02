@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 const excludeEndpoints = [
-    // list the endpoint paths that do NOT require Authorization, e.g.:
-   "/login","/register","/status","/activate","/health"
+    "/login", "/register", "/status", "/activate", "/health"
 ];
 
 const axiosConfig = axios.create({
@@ -33,20 +32,23 @@ axiosConfig.interceptors.request.use(
     }
 );
 
-//response Interceptors
-axiosConfig.interceptors.response.use((response) => {
-    return response;
-},(error) => {
-    if(error.response){
-        if(error.response.status ===401){
-            window.location.href ="/login";
-        }else if(error.response.status === 500){
-            console.error("Server error. Please try again later");
+// response interceptors
+axiosConfig.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    (error) => {
+        if (error.response) {
+            if (error.response.status === 401) {
+                window.location.href = "/login";
+            } else if (error.response.status === 500) {
+                console.error("Server error. Please try again later");
+            }
+        } else if (error.code === "ECONNABORTED") {
+            console.error("Request timeout. Please try again later");
         }
-    }else if(error.code === "ECONNABORTED"){
-        console.error("Request timeout. Pleae try again later");
+        return Promise.reject(error);
     }
-    return Promise.reject(error);
-})
+);
 
 export default axiosConfig;
