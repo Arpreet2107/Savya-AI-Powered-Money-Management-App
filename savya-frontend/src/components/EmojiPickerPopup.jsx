@@ -1,7 +1,12 @@
 import {useState} from "react";
+import EmojiPicker from "emoji-picker-react";
 
-const EmojiPickerPopup= ({icon}) =>{
+const EmojiPickerPopup= ({icon, onSelect}) =>{
     const [isOpen, setIsOpen] = useState(false);
+    const handleEmojiClick = (emoji) =>{
+         onSelect(emoji?.imageUrl || "")
+        setIsOpen(false);
+    }
     return(
         <div className="flex flex-col md:flex-row items-start gap-5 mb-6">
             <div
@@ -16,8 +21,20 @@ const EmojiPickerPopup= ({icon}) =>{
                     <p>{icon ? "Change icon" : "PickICon"}</p>
                 </div>
 
+                {isOpen && (
+                    <div className="relative">
+                        <button
+                            onClick={() => setIsOpen(false)}
+                            className="w-7 h-7  flex items-center justify-center bg-white border border-gray-200 rounded-full absolute -top-2 -right-2 z-10 cursor-pointer">
+                            <X />
+                        </button>
+                        <EmojiPicker
+                            open={isOpen}
+                            onEmojiClick={handleEmojiClick}
+                        />
+                    </div>
+                )}
             </div>
-
         </div>
 
     )

@@ -7,6 +7,8 @@ import {API_ENDPOINTS} from "../util/apiEndpoints.js";
 import axiosConfig from "../util/axiosConfig.jsx";
 import Modal from "../components/Modal.jsx";
 import AddCategoryForm from "../components/AddCategoryForm.jsx";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 const Category = () =>{
     useUser();
@@ -35,6 +37,40 @@ const Category = () =>{
     useEffect(() => {
         fetchCategoryDetails();
     }, []);
+
+    const handleAddCategory =  async (category) => {
+        const {name,type,icon} = category;
+        if(!name.trim()){
+            toast.error("Category name is required");
+            return;
+        }
+
+        const handleEditCategory = (categoryToEdit) => {
+            console.log("Editing the category.",categoryToEdit)
+        }
+
+        //check if the category already exists or not
+        const isDuplicate = categoryData.some((category) => {
+            return category.name.toLowerCase() === name.trim().toLowerCase();
+        })
+        if(isDuplicate){
+            toast.error("Category name already exists.");
+            return;
+        }
+        try{
+            const response = await axiosConfig.post(API_ENDPOINTS.ADD_CATEGORY,{name,type,icon});
+            if(response.status === 201){
+                toast.success("Category added successfully");
+                setOpenAddCategoryModal(false);
+                fetchCategoryDetails();
+            }
+        }catch(error){
+            console.error("Error adding category:",error);
+            toast.error(error.response?.data?.message || "Failed to add category.");
+        }
+    }
+
+    ;
     return(
         <Dashboard activeMenu="Category">
             <div className="my-5 mx-auto">
@@ -48,7 +84,7 @@ const Category = () =>{
                     </button>
                 </div>
                 {/*CategoryList*/}
-                <CategoryList categories={categoryData}/>
+                <CategoryList categories={categoryData} onEditCategorty={handleEditCategory}/>
 
                 {/*Adding category modal*/}
                 <Modal
@@ -56,7 +92,20 @@ const Category = () =>{
                     onClose={() => setOpenAddCategoryModal(false)}
                     title="Add Category"
                 >
-                    <AddCategoryForm />
+                    <AddCategoryForm onAddCategory={handleAddCategory}/>
+                </Modal>
+                {/*Updating category modal*/}
+                <Modal
+                    isOpen={openEditCategoryModal}
+                    onClose={() =>
+                        setOpenEditCategoryModal(false)
+                        setSelectedCategory(null)
+                }}
+                    isOpen={openEditCategoryModal}
+                    title="Update Category"
+                >
+                    <AddCategoryForm
+                        onAddCategory={handleUpdateCategory}/>
                 </Modal>
 
             </div>
