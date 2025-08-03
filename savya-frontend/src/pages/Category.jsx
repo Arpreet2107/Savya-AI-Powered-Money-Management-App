@@ -6,6 +6,7 @@ import {useEffect, useState} from "react";
 import {API_ENDPOINTS} from "../util/apiEndpoints.js";
 import axiosConfig from "../util/axiosConfig.jsx";
 import Modal from "../components/Modal.jsx";
+import AddCategoryForm from "../components/AddCategoryForm.jsx";
 
 const Category = () =>{
     useUser();
@@ -55,7 +56,7 @@ const Category = () =>{
                     onClose={() => setOpenAddCategoryModal(false)}
                     title="Add Category"
                 >
-                    Category Form
+                    <AddCategoryForm />
                 </Modal>
 
             </div>

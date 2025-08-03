@@ -8,7 +8,7 @@ const Modal = ({isOpen,onClose, children,title}) => {
                 {/*Modal header*/}
                 <div className="relative bg-white rounded-xl shadow-2xl border border-gray-100">
                     {/*Modal content*/}
-                    <div "flex items-center justify-between p-5 md:p-6 border-b border-gray-100 rounded-t-xl">
+                    <div className="flex items-center justify-between p-5 md:p-6 border-b border-gray-100 rounded-2-xl">
                         <h3 className="text-xl font-semibold text-gray-800">
                             Add category
                         </h3>
@@ -21,9 +21,12 @@ const Modal = ({isOpen,onClose, children,title}) => {
 
                         </button>
                     </div>
+                    {/*Modal Body*/}
+                    <div className="p-5 md:p-6 text-gray-700">
+                        {children}
+                    </div>
 
                 </div>
-
             </div>
         </div>
     )
