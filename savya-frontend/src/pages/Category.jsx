@@ -15,7 +15,7 @@ const Category = () =>{
     const [loading,setLoading] = useState(false);
     const [categoryData,setCategoryData] = useState([]);
     const [openAddCategoryModal,setOpenAddCategoryModal] = useState(false);
-    const [openEditCategoryModal,setOpenEditCAtegoryModal] = useState(false);
+    const [openEditCategoryModal,setOpenEditCategoryModal] = useState(false);
     const [selectedCategory,setSelectedCategory] = useState(null);
 
     const fetchCategoryDetails = async () => {
@@ -46,7 +46,30 @@ const Category = () =>{
         }
 
         const handleEditCategory = (categoryToEdit) => {
-            console.log("Editing the category.",categoryToEdit)
+            setSelectedCategory(categoryToEdit);
+            setOpenEditCategoryModal(true);
+        }
+
+        const handleUpdateCategory = async (updatedCategory) => {
+            const{id,name,type,icon} = updatedCategory;
+            if(!name.trim()){
+                toast.error("Category Name is required");
+                return;
+            }
+            if(!id){
+                toast.error("Category ID is missing for update");
+                return;
+            }
+            try{
+                const response = await axiosConfig.put(API_ENDPOINTS.UPDATE_CATEGORY(id),{name,type,icon});
+                setOpenEditCategoryModal(false);
+                setSelectedCategory(null);
+                toast.success("Category updated successfully!!");
+                fetchCategoryDetails();
+            }catch(error){
+                console.error("Error updating the category:",error.response?.data?.message || error.message);
+                toast.error(error.response?.data?.message || "Failed to update category.");
+            }
         }
 
         //check if the category already exists or not
@@ -93,6 +116,7 @@ const Category = () =>{
                     title="Add Category"
                 >
                     <AddCategoryForm onAddCategory={handleAddCategory}/>
+
                 </Modal>
                 {/*Updating category modal*/}
                 <Modal
@@ -105,7 +129,10 @@ const Category = () =>{
                     title="Update Category"
                 >
                     <AddCategoryForm
-                        onAddCategory={handleUpdateCategory}/>
+                        intitialCategoryData = {selectedCategory}
+                        onAddCategory={handleAddCategory}
+                        isEditing={true}/>
+
                 </Modal>
 
             </div>
