@@ -119,6 +119,7 @@ const Category = () =>{
 
                 </Modal>
                 {/*Updating category modal*/}
+
                 <Modal
                     isOpen={openEditCategoryModal}
                     onClose={() =>
