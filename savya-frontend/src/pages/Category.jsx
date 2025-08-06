@@ -56,6 +56,7 @@ const Category = () =>{
                 toast.error("Category Name is required");
                 return;
             }
+
             if(!id){
                 toast.error("Category ID is missing for update");
                 return;
